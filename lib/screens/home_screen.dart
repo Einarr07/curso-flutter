@@ -1,11 +1,25 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 import 'package:recibe_book/screens/repice_detail.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
+  Future<List<dynamic>> fetchRecipes() async {
+    final url = Uri.parse(
+      'https://dd60ecb2-3be4-4385-b694-11af00abeef4.mock.pstmn.io/recipes',
+    );
+    final resposne = await http.get(url);
+
+    final data = jsonDecode(resposne.body);
+    return data['recipes'];
+  }
+
   @override
   Widget build(BuildContext context) {
+    fetchRecipes();
     return Scaffold(
       body: Column(
         children: <Widget>[
