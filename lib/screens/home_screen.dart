@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:recibe_book/screens/repice_detail.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -36,44 +37,54 @@ class HomeScreen extends StatelessWidget {
   }
 
   Widget _recipesCard(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        height: 125,
-        child: Card(
-          child: Row(
-            children: <Widget>[
-              Container(
-                height: 125,
-                width: 100,
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(12),
-                  child: Image.asset(
-                    'assets/images/lasagna.png',
-                    fit: BoxFit.cover,
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => RecipeDetail(recipeName: 'Lasagna'),
+          ),
+        );
+      },
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: 125,
+          child: Card(
+            child: Row(
+              children: <Widget>[
+                Container(
+                  height: 125,
+                  width: 100,
+                  child: ClipRRect(
+                    borderRadius: BorderRadius.circular(12),
+                    child: Image.asset(
+                      'assets/images/lasagna.png',
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 ),
-              ),
-              SizedBox(width: 26),
-              Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Text(
-                    'Lasaña',
-                    style: TextStyle(fontSize: 16, fontFamily: 'Quicksand'),
-                  ),
-                  SizedBox(height: 4),
-                  Container(height: 1, width: 75, color: Colors.orange),
-                  Text(
-                    'Pedro Infante',
-                    style: TextStyle(fontSize: 16, fontFamily: 'Quicksand'),
-                  ),
-                  SizedBox(height: 4),
-                ],
-              ),
-            ],
+                SizedBox(width: 26),
+                Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Text(
+                      'Lasaña',
+                      style: TextStyle(fontSize: 16, fontFamily: 'Quicksand'),
+                    ),
+                    SizedBox(height: 4),
+                    Container(height: 1, width: 75, color: Colors.orange),
+                    Text(
+                      'Pedro Infante',
+                      style: TextStyle(fontSize: 16, fontFamily: 'Quicksand'),
+                    ),
+                    SizedBox(height: 4),
+                  ],
+                ),
+              ],
+            ),
           ),
         ),
       ),
