@@ -8,6 +8,9 @@ class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   Future<List<dynamic>> fetchRecipes() async {
+    // Android 10.0.2.2
+    // IOS 127.0.0.1
+
     final url = Uri.parse(
       'https://dd60ecb2-3be4-4385-b694-11af00abeef4.mock.pstmn.io/recipes',
     );
@@ -19,15 +22,20 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    fetchRecipes();
     return Scaffold(
-      body: Column(
-        children: <Widget>[
-          _recipesCard(context),
-          _recipesCard(context),
-          _recipesCard(context),
-        ],
+      body: FutureBuilder<List<dynamic>>(
+        future: fetchRecipes(),
+        builder: (context, snapshot) {
+          final recipes = snapshot.data ?? [];
+          return ListView.builder(
+            itemBuilder: (context, index) {
+              return _recipesCard(context, recipes[index]);
+            },
+            itemCount: recipes!.length,
+          );
+        },
       ),
+
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.orange,
         child: Icon(Icons.add, color: Colors.white),
@@ -50,13 +58,13 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _recipesCard(BuildContext context) {
+  Widget _recipesCard(BuildContext context, dynamic recipe) {
     return GestureDetector(
       onTap: () {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RecipeDetail(recipeName: 'Lasagna'),
+            builder: (context) => RecipeDetail(recipeName: recipe['name']),
           ),
         );
       },
@@ -73,8 +81,8 @@ class HomeScreen extends StatelessWidget {
                   width: 100,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.asset(
-                      'assets/images/lasagna.png',
+                    child: Image.network(
+                      recipe['image_link'],
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -85,13 +93,13 @@ class HomeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: <Widget>[
                     Text(
-                      'Lasaña',
+                      recipe['name'],
                       style: TextStyle(fontSize: 16, fontFamily: 'Quicksand'),
                     ),
                     SizedBox(height: 4),
                     Container(height: 1, width: 75, color: Colors.orange),
                     Text(
-                      'Pedro Infante',
+                      recipe['author'],
                       style: TextStyle(fontSize: 16, fontFamily: 'Quicksand'),
                     ),
                     SizedBox(height: 4),
