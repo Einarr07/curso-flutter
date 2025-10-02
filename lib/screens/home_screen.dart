@@ -1,51 +1,32 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
+import 'package:recibe_book/providers/recipes_provider.dart';
 import 'package:recibe_book/screens/repice_detail.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
-  Future<List<dynamic>> fetchRecipes() async {
-    // Android 10.0.2.2
-    // IOS 127.0.0.1
-
-    final url = Uri.parse(
-      'https://dd60ecb2-3be4-4385-b694-11af00abeef4.mock.pstmn.io/recipes',
-    );
-    try {
-      final response = await http.get(url);
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        return data['recipes'];
-      } else {
-        print('Error ${response.statusCode}');
-        return [];
-      }
-    } catch (exception) {
-      print('Error in request');
-      return [];
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    final recipesProvider = Provider.of<RecipesProvider>(
+      context,
+      listen: false,
+    );
+    recipesProvider.fetchRecipes();
+
     return Scaffold(
-      body: FutureBuilder<List<dynamic>>(
-        future: fetchRecipes(),
-        builder: (context, snapshot) {
-          final recipes = snapshot.data ?? [];
-          if (snapshot.connectionState == ConnectionState.waiting) {
+      body: Consumer<RecipesProvider>(
+        builder: (context, provider, child) {
+          if (provider.isLoading) {
             return const Center(child: CircularProgressIndicator());
-          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          } else if (provider.recipes.isEmpty) {
             return const Center(child: Text('No recipes found'));
           } else {
             return ListView.builder(
               itemBuilder: (context, index) {
-                return _recipesCard(context, recipes[index]);
+                return _recipesCard(context, provider.recipes[index]);
               },
-              itemCount: recipes!.length,
+              itemCount: provider.recipes!.length,
             );
           }
         },
@@ -79,7 +60,7 @@ class HomeScreen extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => RecipeDetail(recipeName: recipe['name']),
+            builder: (context) => RecipeDetail(recipeName: recipe.name),
           ),
         );
       },
@@ -96,25 +77,22 @@ class HomeScreen extends StatelessWidget {
                   width: 100,
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(12),
-                    child: Image.network(
-                      recipe['image_link'],
-                      fit: BoxFit.cover,
-                    ),
+                    child: Image.network(recipe.image_link, fit: BoxFit.cover),
                   ),
                 ),
                 SizedBox(width: 26),
                 Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.center,
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget>[
                     Text(
-                      recipe['name'],
+                      recipe.name,
                       style: TextStyle(fontSize: 16, fontFamily: 'Quicksand'),
                     ),
                     SizedBox(height: 4),
                     Container(height: 1, width: 75, color: Colors.orange),
                     Text(
-                      recipe['author'],
+                      'By: ${recipe.author}',
                       style: TextStyle(fontSize: 16, fontFamily: 'Quicksand'),
                     ),
                     SizedBox(height: 4),
