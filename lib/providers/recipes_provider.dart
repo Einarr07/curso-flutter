@@ -8,6 +8,7 @@ import '../models/recipe_model.dart';
 class RecipesProvider extends ChangeNotifier {
   bool isLoading = false;
   List<Recipe> recipes = [];
+  List<Recipe> favoriteRecipe = [];
 
   Future<void> fetchRecipes() async {
     isLoading = true;
@@ -16,7 +17,7 @@ class RecipesProvider extends ChangeNotifier {
     // IOS 127.0.0.1
 
     final url = Uri.parse(
-      'https://dd60ecb2-3be4-4385-b694-11af00abeef4.mock.pstmn.io/recipes',
+      'https://c31d52b1-1b39-4891-92a1-969ffdc87e66.mock.pstmn.io/recipes',
     );
     try {
       final response = await http.get(url);
@@ -35,6 +36,31 @@ class RecipesProvider extends ChangeNotifier {
     } finally {
       isLoading = false;
       notifyListeners();
+    }
+  }
+
+  Future<void> toggleFavoriteStatus(Recipe recipe) async {
+    final isFavorite = favoriteRecipe.contains(recipe);
+
+    try {
+      final url = Uri.parse(
+        'https://c31d52b1-1b39-4891-92a1-969ffdc87e66.mock.pstmn.io/recipes',
+      );
+      final response = isFavorite
+          ? await http.delete(url, body: json.encode({"id": recipe.id}))
+          : await http.post(url, body: json.encode(recipe.toJson()));
+      if (response.statusCode == 200) {
+        if (isFavorite) {
+          favoriteRecipe.remove(recipe);
+        } else {
+          favoriteRecipe.add(recipe);
+        }
+        notifyListeners();
+      } else {
+        throw Exception('Failed to update favorite recipes');
+      }
+    } catch (error) {
+      print('Error updating favorite status $error');
     }
   }
 }
