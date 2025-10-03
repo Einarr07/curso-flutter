@@ -55,6 +55,28 @@ class _recipeDetailState extends State<RecipeDetail> {
           ),
         ],
       ),
+      body: Padding(
+        padding: EdgeInsets.all(18),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Image.network(widget.recipesData.image_link),
+            SizedBox(height: 12),
+            Text(widget.recipesData.name, style: TextStyle(fontSize: 20)),
+            SizedBox(height: 12),
+            Text(
+              "By: ${widget.recipesData.name}",
+              style: TextStyle(fontSize: 17, color: Colors.grey),
+            ),
+            Text('Recipes steps: ', style: TextStyle(fontSize: 16)),
+            for (var step in widget.recipesData.recipeSteps)
+              Align(
+                alignment: Alignment.centerLeft,
+                child: Text("- $step", style: TextStyle(fontSize: 16)),
+              ),
+          ],
+        ),
+      ),
     );
   }
 }
