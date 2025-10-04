@@ -37,4 +37,13 @@ class Recipe {
   String toString() {
     return 'Recipe{id: $id, name: $name, author: $author, image_link: $image_link, recipe: $recipeSteps}';
   }
+
+  @override
+  bool operator ==(Object other) {
+    if (identical(this, other)) return true;
+    return other is Recipe && other.id == id;
+  }
+
+  @override
+  int get hashCode => id.hashCode;
 }

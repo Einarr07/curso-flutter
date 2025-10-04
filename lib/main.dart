@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:recibe_book/l10n/app_localizations.dart';
 import 'package:recibe_book/providers/recipes_provider.dart';
 import 'package:recibe_book/screens/favorite_recipes.dart';
 import 'package:recibe_book/screens/home_screen.dart';
@@ -14,9 +15,12 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [ChangeNotifierProvider(create: (_) => RecipesProvider())],
       child: MaterialApp(
+        // idiomas soportados
+        supportedLocales: AppLocalizations.supportedLocales,
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
         debugShowCheckedModeBanner: false,
-        title: 'Hola mundo',
-        home: RecipeBook(),
+        title: 'Recibe Book',
+        home: const RecipeBook(),
       ),
     );
   }
@@ -27,23 +31,28 @@ class RecipeBook extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return DefaultTabController(
-      length: 4,
+      length: 2,
       child: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.orange,
-          title: Text('Recipe Book', style: TextStyle(color: Colors.white)),
+          title: Text(
+            l10n.appTitle,
+            style: const TextStyle(color: Colors.white),
+          ),
           bottom: TabBar(
             indicatorColor: Colors.black,
             labelColor: Colors.white,
             unselectedLabelColor: Colors.white,
             tabs: [
-              Tab(icon: Icon(Icons.home), text: 'Home'),
-              Tab(icon: Icon(Icons.favorite), text: 'Favorite'),
+              Tab(icon: const Icon(Icons.home), text: l10n.home),
+              Tab(icon: const Icon(Icons.favorite), text: l10n.favorite),
             ],
           ),
         ),
-        body: TabBarView(children: [HomeScreen(), FavoriteRecipes()]),
+        body: const TabBarView(children: [HomeScreen(), FavoriteRecipes()]),
       ),
     );
   }

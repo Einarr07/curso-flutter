@@ -20,7 +20,7 @@ class FavoriteRecipes extends StatelessWidget {
               : ListView.builder(
                   itemBuilder: (context, index) {
                     final recipe = favoritesRecipes[index];
-                    FavoriteRecipesCard(recipe: recipe);
+                    return FavoriteRecipesCard(recipe: recipe);
                   },
                   itemCount: favoritesRecipes.length,
                 );

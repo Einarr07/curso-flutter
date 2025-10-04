@@ -13,8 +13,35 @@ class RecipeDetail extends StatefulWidget {
   _recipeDetailState createState() => _recipeDetailState();
 }
 
-class _recipeDetailState extends State<RecipeDetail> {
+class _recipeDetailState extends State<RecipeDetail>
+    with SingleTickerProviderStateMixin {
   bool isFavorite = false;
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: Duration(milliseconds: 300),
+      vsync: this,
+    );
+
+    _scaleAnimation =
+        Tween<double>(begin: 1.0, end: 1.5).animate(
+          CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+        )..addStatusListener((status) {
+          if (status == AnimationStatus.completed) {
+            _controller.reverse();
+          }
+        });
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {
@@ -51,7 +78,14 @@ class _recipeDetailState extends State<RecipeDetail> {
                 isFavorite = !isFavorite;
               });
             },
-            icon: Icon(isFavorite ? Icons.favorite : Icons.favorite_border),
+            icon: ScaleTransition(
+              scale: _scaleAnimation,
+              child: Icon(
+                isFavorite ? Icons.favorite : Icons.favorite_border,
+                key: ValueKey<bool>(isFavorite),
+                color: Colors.red,
+              ),
+            ),
           ),
         ],
       ),
@@ -65,7 +99,7 @@ class _recipeDetailState extends State<RecipeDetail> {
             Text(widget.recipesData.name, style: TextStyle(fontSize: 20)),
             SizedBox(height: 12),
             Text(
-              "By: ${widget.recipesData.name}",
+              "By: ${widget.recipesData.author}",
               style: TextStyle(fontSize: 17, color: Colors.grey),
             ),
             Text('Recipes steps: ', style: TextStyle(fontSize: 16)),
